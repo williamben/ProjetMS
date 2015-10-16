@@ -15,7 +15,7 @@ public class Simul {
 			
 		//	afficheterminal("avant le calcul");
 		//	Thread.sleep(5000);
-		//afficheterminal("aprés le calcul");
+		
 
 		new Simul();
 		Simul test=new Simul();
@@ -36,6 +36,7 @@ public class Simul {
 				}else{
 					UM.put(s,1);
 				}
+				System.out.println("File: UM"+nameFileDest+ " word: "+s);
 			}
 
 		} finally {
@@ -45,10 +46,10 @@ public class Simul {
 		for(String s:UM.keySet()){
 			test.createFile("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
 			//testWriter.writer("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
+			
 		}
-		//File toto=new File(args[0]);
-		//toto.delete();
-
+		afficheterminal("Machine Disponible: ");
+		
 		
 	}
 	public  void createFile(String fileName,String toWrite) throws IOException {

@@ -22,12 +22,20 @@ class AfficheurFlux implements Runnable {
     public void run() {
         BufferedReader br = getBufferedReader(inputStream);
         String ligne = "";
-        this.isconnected=false;
         try {
             
         	while ((ligne = br.readLine()) != null) {
-        		if(ligne.contains("OK")){
-                	this.isconnected=true;
+        		if(ligne.contains("Machine Disponible:")){
+                	Shavadoop.ListMachine.AddMachineDispo(ligne.substring(ligne.length()-7, ligne.length())+".enst.fr");
+            	}
+        		if(ligne.contains("word:")){
+        			String []words=ligne.split("\\s");
+                	if (Shavadoop.ListeWord.get(words[3])==null){
+                		Shavadoop.ListeWord.put(words[3],words[1]);
+                	}else{
+                   		Shavadoop.ListeWord.put(words[3],Shavadoop.ListeWord.get(words[3])+" "+words[1]);
+                	}
+        			
             	}
             	System.out.println(ligne);
             	
