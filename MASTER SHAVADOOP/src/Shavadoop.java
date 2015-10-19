@@ -126,8 +126,8 @@ public class Shavadoop {
 			ProcessBuilder pb = new ProcessBuilder(commande);
 			//Process p = Runtime.getRuntime().exec(commande);
 			p = pb.start();
-			AfficheurFlux fluxSortie = new AfficheurFlux(p.getInputStream());
-			AfficheurFlux fluxErreur = new AfficheurFlux(p.getErrorStream());
+			AfficheurFluxMap fluxSortie = new AfficheurFluxMap(p.getInputStream());
+			AfficheurFluxMap fluxErreur = new AfficheurFluxMap(p.getErrorStream());
 
 			new Thread(fluxSortie).start();
 			new Thread(fluxErreur).start();
@@ -197,8 +197,8 @@ public class Shavadoop {
 			ProcessBuilder pb = new ProcessBuilder(commande);
 			//Process p = Runtime.getRuntime().exec(commande);
 			p = pb.start();
-			AfficheurFlux fluxSortie = new AfficheurFlux(p.getInputStream());
-			AfficheurFlux fluxErreur = new AfficheurFlux(p.getErrorStream());
+			AfficheurFluxReduce fluxSortie = new AfficheurFluxReduce(p.getInputStream());
+			AfficheurFluxReduce fluxErreur = new AfficheurFluxReduce(p.getErrorStream());
 
 			new Thread(fluxSortie).start();
 			new Thread(fluxErreur).start();
@@ -219,7 +219,7 @@ public class Shavadoop {
 
 
 
-	public static void main(String[] tito) throws IOException {
+	public static void main(String[] args) throws IOException {
 		//ON instancie Shavadoop
 
 		Split.toSplitte();
@@ -234,7 +234,7 @@ public class Shavadoop {
 		System.out.println("Liste des postes disponible.\n");
 		SD.readAndProceedMap(ListSplit);//("/cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
 		//Map("cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
-		System.out.println("Le calcul est terminé");
+		//System.out.println("Le calcul est terminé");
 
 		for(String s: HashMapWord.keySet()){
 			System.out.println((s));
@@ -243,6 +243,7 @@ public class Shavadoop {
 				System.out.println(s1);
 			}
 		}
+		HashMapMachine.AfficheDispo();
 		SD.ProcessShuffleAndReduce();
 
 

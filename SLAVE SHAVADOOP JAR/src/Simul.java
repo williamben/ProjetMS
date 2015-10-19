@@ -52,16 +52,46 @@ public class Simul {
 				//testWriter.writer("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
 
 			}
-			afficheterminal("Machine Disponible: ");
+			
 		}
 		if (args[0].contains("ShuffleAndReduce")){
+
 			System.out.println("ShuffleAndReduce");
-			System.out.println(args.length);
+			String FileSandR=null;
+			int SommeWordsForAllUM=0;
+			for( int NbArgs=2;NbArgs<args.length;NbArgs++){
+				FileSandR="/cal/homes/wbenhaim/Desktop/tmpShavadoop/"+args[NbArgs]+".txt";
+				SommeWordsForAllUM=SommeWordsForAllUM+ReadUMandReturnNB(FileSandR,args[1]);
+				
+			}
+			System.out.println("words: "+args[1]+" appaears: "+SommeWordsForAllUM);
+		}
+		afficheterminal("Machine Disponible: ");
+	}
+	
+		public static int ReadUMandReturnNB(String fileName,String words)throws IOException {
+		    BufferedReader br = new BufferedReader(new FileReader(fileName));
+		    int SommeWordsForAUM=0;
+		    try {
+		        StringBuilder sb = new StringBuilder();
+		        String line = br.readLine();
+
+		        while (line != null) {
+		        	String []str=line.split("\\s");
+		        	if (str[0].contains(words)){
+		        		SommeWordsForAUM=SommeWordsForAUM+Integer.parseInt(str[1]);
+		        	}
+		            sb.append(line);
+		            sb.append("\n");
+		            line = br.readLine();
+		        }
+		        return SommeWordsForAUM;
+		    } finally {
+		        br.close();
+		    }
 		}
 
-
-
-	}
+	
 	public  void createFile(String fileName,String toWrite) throws IOException {
 		//BufferedReader br = new BufferedReader(new FileReader(fileName));
 		File f = new File (fileName);

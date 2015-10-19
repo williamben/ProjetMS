@@ -6,13 +6,11 @@ import java.util.ArrayList;
 
 
 class AfficheurFlux implements Runnable {
-
-    private final InputStream inputStream;
+	private final InputStream inputStream;
     static String line1;
     public static boolean isconnected;
-    ArrayList<String> ListWord;//=new ArrayList<String>();
 
-	AfficheurFlux(InputStream inputStream) {
+    AfficheurFlux(InputStream inputStream) {
         this.inputStream = inputStream;
     }
 
@@ -27,33 +25,19 @@ class AfficheurFlux implements Runnable {
         try {
             
         	while ((ligne = br.readLine()) != null) {
-        		if(ligne.contains("Machine Disponible:")){
-                	Shavadoop.HashMapMachine.RemoveProcessForAMachine(ligne.substring(ligne.length()-7, ligne.length())+".enst.fr");
-
+        		System.out.println(ligne);
+        		if(ligne.contains("c133")){
+        			System.out.println(ligne);
             	}
-        		if(ligne.contains("word:")){
-        			String []words=ligne.split("\\s");
-        			
-                	if (Shavadoop.HashMapWord.get(words[3])==null){
-                		ListWord=new ArrayList<String>();
-                	}else{
-                		ListWord=Shavadoop.HashMapWord.get(words[3]);
-                	}
-                   		ListWord.add(words[1]);
-                   		Shavadoop.HashMapWord.put(words[3],ListWord);
-                	
-        			
-            	}
-        		
-            	System.out.println(ligne);
+            	
             	
             }
-        	
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+    
 
 
 }
