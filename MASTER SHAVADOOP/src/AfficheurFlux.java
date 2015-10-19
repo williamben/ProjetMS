@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 
 class AfficheurFlux implements Runnable {
@@ -9,6 +10,7 @@ class AfficheurFlux implements Runnable {
     private final InputStream inputStream;
     static String line1;
     public static boolean isconnected;
+    ArrayList<String> ListWord;//=new ArrayList<String>();
 
 	AfficheurFlux(InputStream inputStream) {
         this.inputStream = inputStream;
@@ -26,20 +28,27 @@ class AfficheurFlux implements Runnable {
             
         	while ((ligne = br.readLine()) != null) {
         		if(ligne.contains("Machine Disponible:")){
-                	Shavadoop.ListMachine.AddMachineDispo(ligne.substring(ligne.length()-7, ligne.length())+".enst.fr");
+                	Shavadoop.HashMapMachine.RemoveProcessForAMachine(ligne.substring(ligne.length()-7, ligne.length())+".enst.fr");
+
             	}
         		if(ligne.contains("word:")){
         			String []words=ligne.split("\\s");
-                	if (Shavadoop.ListeWord.get(words[3])==null){
-                		Shavadoop.ListeWord.put(words[3],words[1]);
+        			
+                	if (Shavadoop.HashMapWord.get(words[3])==null){
+                		ListWord=new ArrayList<String>();
                 	}else{
-                   		Shavadoop.ListeWord.put(words[3],Shavadoop.ListeWord.get(words[3])+" "+words[1]);
+                		ListWord=Shavadoop.HashMapWord.get(words[3]);
                 	}
+                   		ListWord.add(words[1]);
+                   		Shavadoop.HashMapWord.put(words[3],ListWord);
+                	
         			
             	}
+        		
             	System.out.println(ligne);
             	
             }
+        	
         } catch (IOException e) {
             e.printStackTrace();
         }

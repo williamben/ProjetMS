@@ -12,45 +12,55 @@ public class Simul {
 
 
 
-			
+
 		//	afficheterminal("avant le calcul");
 		//	Thread.sleep(5000);
-		
 
-		new Simul();
-		Simul test=new Simul();
-		Writer testWriter=new Writer();
-		BufferedReader br = new BufferedReader(new FileReader(args[0]));
-		HashMap<String,Integer>UM=new HashMap<String,Integer>();
-		String nameFileDest=args[0].substring(args[0].length()-5, args[0].length()-4);
-		
-		try {
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
-			String []str=line.split("\\s");
-			
-			for(String s:str){
-//				System.out.println(s);
-				if(UM.containsKey(s)){
-					UM.put(s, UM.get(s)+1);
-				}else{
-					UM.put(s,1);
+		if (args[0].contains("MAP")){
+			System.out.println("MAP");
+			System.out.println(args.length);
+			new Simul();
+			Simul test=new Simul();
+			Writer testWriter=new Writer();
+			BufferedReader br = new BufferedReader(new FileReader(args[1]));
+			HashMap<String,Integer>UM=new HashMap<String,Integer>();
+			//String nameFileDest=args[1].substring(args[1].length()-5, args[1].length()-4);
+			String nameFileDest1=args[1].substring(0, args[1].length()-4);
+
+			String nameFileDest=nameFileDest1.substring(42, nameFileDest1.length());
+			try {
+				StringBuilder sb = new StringBuilder();
+				String line = br.readLine();
+				String []str=line.split("\\s");
+
+				for(String s:str){
+					//				System.out.println(s);
+					if(UM.containsKey(s)){
+						UM.put(s, UM.get(s)+1);
+					}else{
+						UM.put(s,1);
+					}
+					System.out.println("File: UM"+nameFileDest+ " word: "+s);
 				}
-				System.out.println("File: UM"+nameFileDest+ " word: "+s);
+
+			} finally {
+				br.close();
 			}
 
-		} finally {
-			br.close();
+			for(String s:UM.keySet()){
+				test.createFile("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
+				//testWriter.writer("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
+
+			}
+			afficheterminal("Machine Disponible: ");
+		}
+		if (args[0].contains("ShuffleAndReduce")){
+			System.out.println("ShuffleAndReduce");
+			System.out.println(args.length);
 		}
 
-		for(String s:UM.keySet()){
-			test.createFile("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
-			//testWriter.writer("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
-			
-		}
-		afficheterminal("Machine Disponible: ");
-		
-		
+
+
 	}
 	public  void createFile(String fileName,String toWrite) throws IOException {
 		//BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -67,7 +77,7 @@ public class Simul {
 
 
 	}
-	
+
 	static void afficheterminal(String Texte) throws IOException {
 		Process p;
 		Runtime mRuntime = Runtime.getRuntime();
@@ -81,8 +91,8 @@ public class Simul {
 			while ((line = reader.readLine()) != null)
 			{
 				System.out.println(Texte+" " +line);
-				
-			
+
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

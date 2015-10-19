@@ -10,11 +10,11 @@ public class Shavadoop {
 
 	//la fonction readFile est sign�e String, elle prend un fichier'filename' du type String.  Elle g�n�re l'exception
 	//le syntaxe pour lire un fichier depuis l'ext�rieur BufferedReader puis lui passer un autre classe 'FileReader ()'
-	public static RessourceManager ListMachine=new RessourceManager();
+	public static RessourceManager HashMapMachine=new RessourceManager();
 	public static Splitter Split=new Splitter("/cal/homes/wbenhaim/Desktop/Input.txt");
 	ArrayList<String> ListFichier=new ArrayList<String>();
-	public static HashMap<String,ArrayList<String>>ListeWord=new HashMap<String,ArrayList<String>>();
-	
+	public static HashMap<String,ArrayList<String>>HashMapWord=new HashMap<String,ArrayList<String>>();
+
 	public  void createFile(String fileName,String toWrite) throws IOException {
 		//BufferedReader br = new BufferedReader(new FileReader(fileName));
 		File f = new File (fileName);
@@ -56,7 +56,7 @@ public class Shavadoop {
 					p.waitFor();
 					if(fluxSortie.isconnected){
 						Result=Result+line+"\n";
-						ListMachine.AddMachineDispo(line);
+						HashMapMachine.AddMachineDispo(line);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -76,29 +76,27 @@ public class Shavadoop {
 
 	}
 
-	public  void readAndProceedSlave2(ArrayList<String> ListSplit) throws IOException {
+	public  void readAndProceedMap(ArrayList<String> ListSplit) throws IOException {
 
 		ArrayList<Process> ListProcess=new ArrayList<Process>();
 		String machine=null;
 		for(String Split:ListSplit){
-			ListMachine.GetFirstMachine();
-			while(ListMachine.GetFirstMachine()==null){
-			}
-			machine=ListMachine.GetFirstMachine();
-			
+
+
+			machine=HashMapMachine.GetFirstMachine();
+
 			System.out.println("On lance SLAVE sur "+machine );
-			ListMachine.RemoveMachineDispo(machine);
-			Process p =testSlave(machine,Split);
+			HashMapMachine.AddProcessForAMachine(machine);
+
+			Process p =Map(machine,Split);
 			if(p!=null){
 				ListProcess.add(p);	
 			}
-			
-
 		}
 		for(Process p:ListProcess){
 
 			try {
-				
+
 				p.waitFor();
 
 			} catch (InterruptedException e) {
@@ -106,27 +104,94 @@ public class Shavadoop {
 				e.printStackTrace();
 			}
 		}
-
-
-		//return sb.toString();
-
 	}
 
 
 
-	public  Process testSlave(String line,String UM) throws IOException {
+	public  Process Map(String machine,String UM) throws IOException {
 		//BufferedReader br = new BufferedReader(new FileReader(fileName));
 		//try {
 		//StringBuilder sb = new StringBuilder();
 		//String line = br.readLine();
 		Process p=null;
-		if(line==null){
+		if(machine==null){
 			return p;
 		}
 		try {
 
 
-			String[] commande = { "sh", "-c", " ssh " +line+ " 'java -jar ~/Desktop/Slave.jar' " +UM };
+			String[] commande = { "sh", "-c", " ssh " +machine+ " 'java -jar ~/Desktop/Slave.jar' MAP " +UM };
+			//System.out.println(" ssh " +line+ " 'java -jar ~/Desktop/Slave.jar' " +UM );
+
+			ProcessBuilder pb = new ProcessBuilder(commande);
+			//Process p = Runtime.getRuntime().exec(commande);
+			p = pb.start();
+			AfficheurFlux fluxSortie = new AfficheurFlux(p.getInputStream());
+			AfficheurFlux fluxErreur = new AfficheurFlux(p.getErrorStream());
+
+			new Thread(fluxSortie).start();
+			new Thread(fluxErreur).start();
+
+			//p.waitFor();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} //catch (InterruptedException e) {
+		//e.printStackTrace();
+		//}
+
+		return p;
+
+
+	}
+
+	public void ProcessShuffleAndReduce(){
+		ArrayList<Process> ListProcess=new ArrayList<Process>();
+		String machine=null;
+		String MotsAndMachines=null;
+		for(String words: HashMapWord.keySet()){
+			MotsAndMachines=words;
+			System.out.println((words));
+			ArrayList<String> HashMapMachineForAWord=HashMapWord.get(words);
+			for (String Machine:HashMapMachineForAWord){
+				MotsAndMachines=MotsAndMachines+" "+Machine;
+			}
+			System.out.println(MotsAndMachines);
+
+
+			machine=HashMapMachine.GetFirstMachine();
+
+			System.out.println("On lance SLAVE sur "+machine );
+			HashMapMachine.AddProcessForAMachine(machine);
+
+			Process p =ShuffleAndReduce(machine,MotsAndMachines);
+			if(p!=null){
+				ListProcess.add(p);	
+			}
+		}
+		for(Process p:ListProcess){
+
+			try {
+
+				p.waitFor();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	public Process ShuffleAndReduce(String machine,String MotsAndMachines){
+
+		Process p=null;
+		if(machine==null){
+			return p;
+		}
+		try {
+
+
+			String[] commande = { "sh", "-c", " ssh " +machine+ " 'java -jar ~/Desktop/Slave.jar' ShuffleAndReduce " +MotsAndMachines };
 			//System.out.println(" ssh " +line+ " 'java -jar ~/Desktop/Slave.jar' " +UM );
 			
 			ProcessBuilder pb = new ProcessBuilder(commande);
@@ -147,9 +212,6 @@ public class Shavadoop {
 
 		return p;
 
-		//				} finally {
-		//					//br.close();
-		//				}
 
 	}
 
@@ -157,9 +219,7 @@ public class Shavadoop {
 
 
 
-
-
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] tito) throws IOException {
 		//ON instancie Shavadoop
 
 		Split.toSplitte();
@@ -172,14 +232,21 @@ public class Shavadoop {
 		String fileName=("/cal/homes/wbenhaim/git/ProjetMS/MASTER SHAVADOOP/src/c124hosts");
 		SD.availableDesk(fileName);
 		System.out.println("Liste des postes disponible.\n");
-		SD.readAndProceedSlave2(ListSplit);//("/cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
-		//TestSlave("cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
+		SD.readAndProceedMap(ListSplit);//("/cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
+		//Map("cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
 		System.out.println("Le calcul est terminé");
 
-		for(String s:ListeUM.keySet()){
+		for(String s: HashMapWord.keySet()){
 			System.out.println((s));
-			System.out.println(ListeUM.get(s));
+			ArrayList<String> HashMapMachineForAWord=HashMapWord.get(s);
+			for (String s1:HashMapMachineForAWord){
+				System.out.println(s1);
+			}
 		}
+		SD.ProcessShuffleAndReduce();
+
+
+
 		///
 
 
