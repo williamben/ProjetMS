@@ -35,7 +35,6 @@ public class Shavadoop {
 		String Result="";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 
-
 		try {
 			StringBuilder sb = new StringBuilder();
 			String line = br.readLine();
@@ -70,7 +69,7 @@ public class Shavadoop {
 			}
 
 		} finally {
-			createFile("/cal/homes/wbenhaim/git/ProjetMS/MASTER SHAVADOOP/src/AvailableDesk.txt",Result);
+			createFile("/cal/homes/wbenhaim/Desktop/tmpShavadoop/AvailableDesk.txt",Result);
 			br.close();
 		}
 
@@ -81,7 +80,6 @@ public class Shavadoop {
 		ArrayList<Process> ListProcess=new ArrayList<Process>();
 		String machine=null;
 		for(String Split:ListSplit){
-
 
 			machine=HashMapMachine.GetFirstMachine();
 
@@ -105,7 +103,6 @@ public class Shavadoop {
 			}
 		}
 	}
-
 
 
 	public  Process Map(String machine,String UM) throws IOException {
@@ -193,7 +190,7 @@ public class Shavadoop {
 
 			String[] commande = { "sh", "-c", " ssh " +machine+ " 'java -jar ~/Desktop/Slave.jar' ShuffleAndReduce " +MotsAndMachines };
 			//System.out.println(" ssh " +line+ " 'java -jar ~/Desktop/Slave.jar' " +UM );
-			
+
 			ProcessBuilder pb = new ProcessBuilder(commande);
 			//Process p = Runtime.getRuntime().exec(commande);
 			p = pb.start();
@@ -211,17 +208,23 @@ public class Shavadoop {
 		//}
 
 		return p;
-
-
 	}
 
-
-
-
-
-	public static void main(String[] args) throws IOException {
-		//ON instancie Shavadoop
-
+	public static void deleteFile(String filePAth) throws IOException, InterruptedException{
+		String[] commande = { "sh", "-c", "rm -rf "+ filePAth+"* " };
+		ProcessBuilder pb = new ProcessBuilder(commande);
+		//Process p = Runtime.getRuntime().exec(commande);
+		Process p = pb.start();
+		p.waitFor();
+		
+	}
+	public static void main(String[] args) throws IOException, InterruptedException {
+		//TO DO
+		// gerer les 4 process par machine
+		deleteFile("/cal/homes/wbenhaim/Desktop/OutPut.txt");
+		deleteFile("/cal/homes/wbenhaim/Desktop/tmpShavadoop/");
+		
+		String allDesk="/cal/homes/wbenhaim/git/ProjetMS/MASTER SHAVADOOP/src/c124hosts";
 		Split.toSplitte();
 		ArrayList<String> ListSplit=Split.getListSplit();
 		//System.out.println(ListSplit.toString());
@@ -229,11 +232,11 @@ public class Shavadoop {
 		Shavadoop SD=new Shavadoop();
 
 		System.out.println("Début\n");
-		String fileName=("/cal/homes/wbenhaim/git/ProjetMS/MASTER SHAVADOOP/src/c124hosts");
+		String fileName=(allDesk);
 		SD.availableDesk(fileName);
-		System.out.println("Liste des postes disponible.\n");
+		System.out.println("Liste des postes disponible: OK.\n");
 		SD.readAndProceedMap(ListSplit);//("/cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
-		//Map("cal/homes/wbenhaim/workspace/MASTER SHAVADOOP/src/AvailableDesk.txt");
+		//Map("/cal/homes/wbenhaim/Desktop/tmpShavadoop/AvailableDesk.txt");
 		//System.out.println("Le calcul est terminé");
 
 		for(String s: HashMapWord.keySet()){
@@ -243,14 +246,14 @@ public class Shavadoop {
 				System.out.println(s1);
 			}
 		}
+		System.out.println("MAP: OK.\n");
 		HashMapMachine.AfficheDispo();
 		SD.ProcessShuffleAndReduce();
-
-
-
-		///
-
-
+		System.out.println("REDUCE: OK.\n");
+		Sort fileOutPUt=new Sort("/cal/homes/wbenhaim/Desktop/OutPut.txt");
+		fileOutPUt.sort();
+		System.out.println("FIN DU PROGRAMME: OK.\n");
+//
 
 	}
 

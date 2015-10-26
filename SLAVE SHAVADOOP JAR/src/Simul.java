@@ -18,7 +18,6 @@ public class Simul {
 
 		if (args[0].contains("MAP")){
 			System.out.println("MAP");
-			System.out.println(args.length);
 			new Simul();
 			Simul test=new Simul();
 			Writer testWriter=new Writer();
@@ -31,16 +30,19 @@ public class Simul {
 			try {
 				StringBuilder sb = new StringBuilder();
 				String line = br.readLine();
-				String []str=line.split("\\s");
+				if(line != null) {
+					String[] str=line.split("\\s");
 
-				for(String s:str){
-					//				System.out.println(s);
-					if(UM.containsKey(s)){
-						UM.put(s, UM.get(s)+1);
-					}else{
-						UM.put(s,1);
+					for(String s:str){
+						s = supprimer(s,"\\p{Punct}");
+						s = s.toLowerCase();
+						if(UM.containsKey(s)){
+							UM.put(s, UM.get(s)+1);
+						}else{
+							UM.put(s,1);
+						}
+						System.out.println("File: UM"+nameFileDest+ " word: "+s);
 					}
-					System.out.println("File: UM"+nameFileDest+ " word: "+s);
 				}
 
 			} finally {
@@ -52,7 +54,7 @@ public class Simul {
 				//testWriter.writer("/cal/homes/wbenhaim/Desktop/tmpShavadoop/UM"+nameFileDest+".txt",s+" "+ UM.get(s)+"\n");
 
 			}
-			
+
 		}
 		if (args[0].contains("ShuffleAndReduce")){
 
@@ -62,36 +64,38 @@ public class Simul {
 			for( int NbArgs=2;NbArgs<args.length;NbArgs++){
 				FileSandR="/cal/homes/wbenhaim/Desktop/tmpShavadoop/"+args[NbArgs]+".txt";
 				SommeWordsForAllUM=SommeWordsForAllUM+ReadUMandReturnNB(FileSandR,args[1]);
-				
+
 			}
-			System.out.println("words: "+args[1]+" appaears: "+SommeWordsForAllUM);
+			System.out.println("words: "+args[1]+" appears: "+SommeWordsForAllUM);
 		}
 		afficheterminal("Machine Disponible: ");
 	}
-	
-		public static int ReadUMandReturnNB(String fileName,String words)throws IOException {
-		    BufferedReader br = new BufferedReader(new FileReader(fileName));
-		    int SommeWordsForAUM=0;
-		    try {
-		        StringBuilder sb = new StringBuilder();
-		        String line = br.readLine();
 
-		        while (line != null) {
-		        	String []str=line.split("\\s");
-		        	if (str[0].contains(words)){
-		        		SommeWordsForAUM=SommeWordsForAUM+Integer.parseInt(str[1]);
-		        	}
-		            sb.append(line);
-		            sb.append("\n");
-		            line = br.readLine();
-		        }
-		        return SommeWordsForAUM;
-		    } finally {
-		        br.close();
-		    }
+	public static int ReadUMandReturnNB(String fileName,String words)throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		int SommeWordsForAUM=0;
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while (line != null) {
+				String []str=line.split("\\s");
+
+				if (str[0].equals(words)){
+
+					SommeWordsForAUM=SommeWordsForAUM+Integer.parseInt(str[1]);
+				}
+				sb.append(line);
+				sb.append("\n");
+				line = br.readLine();
+			}
+			return SommeWordsForAUM;
+		} finally {
+			br.close();
 		}
+	}
 
-	
+
 	public  void createFile(String fileName,String toWrite) throws IOException {
 		//BufferedReader br = new BufferedReader(new FileReader(fileName));
 		File f = new File (fileName);
@@ -106,6 +110,13 @@ public class Simul {
 		fw.close();
 
 
+	}
+	public static String supprimer(String texte, String regex)
+	{
+		StringBuffer sb = new StringBuffer();
+		for (String s : texte.split(regex))
+			sb.append(s);
+		return sb.toString();      
 	}
 
 	static void afficheterminal(String Texte) throws IOException {
@@ -128,5 +139,7 @@ public class Simul {
 			e.printStackTrace();
 		}
 	}
+
+
 
 }
